@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0d14;
+    --surface: #111520;
+    --surface2: #161b27;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00e5c0;
+    --accent2: #3d8eff;
+    --text: #e8eaf0;
+    --muted: #5a6278;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.65; overflow-x: hidden; }
+
+  /* GRID TEXTURE */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,192,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,192,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,13,20,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.08em; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 56px;
+  }
+  .hero-inner { padding: 5rem 0 4rem; width: 100%; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    border: 1px solid rgba(0,229,192,0.25);
+    padding: 5px 12px; border-radius: 2px;
+    margin-bottom: 2rem; letter-spacing: 0.1em;
+  }
+  .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: var(--mono); font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700; line-height: 1.1; margin-bottom: 0.5rem;
+    color: #fff; letter-spacing: -0.02em;
+  }
+  .hero-subtitle {
+    font-family: var(--mono); font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--accent); margin-bottom: 1.5rem; letter-spacing: 0.02em;
+  }
+  .hero-desc {
+    font-size: 16px; color: var(--muted); max-width: 560px;
+    line-height: 1.8; margin-bottom: 2.5rem;
+  }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    background: var(--accent); color: #0a0d14; padding: 12px 24px;
+    border: none; cursor: pointer; text-transform: uppercase;
+    text-decoration: none; display: inline-block;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-outline {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    background: transparent; color: var(--text); padding: 12px 24px;
+    border: 1px solid var(--border); cursor: pointer; text-transform: uppercase;
+    text-decoration: none; display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* STAT BAR */
+  .stat-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+  .stat {
+    padding: 1.5rem 1.5rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-num { font-family: var(--mono); font-size: 2rem; font-weight: 700; color: var(--accent); display: block; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; display: block; }
+
+  /* SECTION HEADERS */
+  .sec-header { margin-bottom: 3rem; }
+  .sec-tag { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+  .sec-title { font-family: var(--mono); font-size: 1.8rem; font-weight: 700; color: #fff; }
+
+  /* EXPERIENCE */
+  #experience { padding: 6rem 0; }
+  .exp-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .exp-item { background: var(--surface); padding: 2rem; cursor: pointer; transition: background 0.2s; }
+  .exp-item:hover { background: var(--surface2); }
+  .exp-item.active { background: var(--surface2); }
+  .exp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+  .exp-title-wrap {}
+  .exp-role { font-family: var(--mono); font-size: 14px; font-weight: 700; color: #fff; }
+  .exp-company { font-size: 13px; color: var(--accent2); margin-top: 3px; }
+  .exp-date { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .exp-body { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+  .exp-item.active .exp-body { display: block; }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .exp-bullets li { font-size: 13px; color: #9ba3b8; padding-left: 1.2rem; position: relative; line-height: 1.6; }
+  .exp-bullets li::before { content: '›'; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+  .exp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1.25rem; }
+  .tag { font-family: var(--mono); font-size: 10px; color: var(--accent); border: 1px solid rgba(0,229,192,0.2); padding: 3px 8px; letter-spacing: 0.05em; }
+
+  /* SKILLS */
+  #skills { padding: 6rem 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .skill-card { background: var(--bg); padding: 1.5rem; }
+  .skill-card-title { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+  .skill-list { display: flex; flex-direction: column; gap: 10px; }
+  .skill-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .skill-name { font-size: 12px; color: #9ba3b8; white-space: nowrap; }
+  .skill-bar-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 0; overflow: hidden; }
+  .skill-bar-fill { height: 100%; background: var(--accent); transition: width 1s ease; }
+  .skill-bar-fill.blue { background: var(--accent2); }
+
+  /* PROJECTS / HIGHLIGHTS */
+  #highlights { padding: 6rem 0; }
+  .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .proj-card { background: var(--surface); padding: 2rem; position: relative; overflow: hidden; }
+  .proj-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); opacity: 0; transition: opacity 0.2s; }
+  .proj-card:hover::before { opacity: 1; }
+  .proj-num { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 0.75rem; display: block; }
+  .proj-title { font-family: var(--mono); font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 0.75rem; }
+  .proj-desc { font-size: 13px; color: #9ba3b8; line-height: 1.65; margin-bottom: 1rem; }
+  .proj-metric { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+
+  /* EDUCATION & CERTS */
+  #education { padding: 6rem 0; background: var(--surface); border-top: 1px solid var(--border); }
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .edu-card { background: var(--bg); padding: 1.75rem 2rem; }
+  .edu-degree { font-family: var(--mono); font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .edu-school { font-size: 13px; color: var(--accent2); margin-bottom: 4px; }
+  .edu-dates { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* CONTACT */
+  #contact { padding: 6rem 0; }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .contact-heading { font-family: var(--mono); font-size: 2rem; font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 1rem; }
+  .contact-sub { font-size: 14px; color: var(--muted); margin-bottom: 2rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
+  .contact-link { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); text-decoration: none; transition: background 0.15s; }
+  .contact-link:last-child { border-bottom: none; }
+  .contact-link:hover { background: var(--surface2); }
+  .contact-link-icon { width: 32px; height: 32px; background: rgba(0,229,192,0.08); border: 1px solid rgba(0,229,192,0.15); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .contact-link-text { font-family: var(--mono); font-size: 12px; color: var(--text); }
+  .contact-link-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ANIMATIONS */
+  .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 640px) {
+    .stat-bar { grid-template-columns: 1fr 1fr; }
+    .contact-inner { grid-template-columns: 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">AM // NETWORK_ENG</div>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#highlights">Highlights</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner fade-in">
+      <div class="hero-tag">Available for opportunities</div>
+      <h1>Anshul Mehta</h1>
+      <div class="hero-subtitle">// Network Engineer</div>
+      <p class="hero-desc">
+        6+ years designing, deploying, and troubleshooting high-availability TCP/IP networks across hyperscale data centers, Security Operations Centers, and global enterprise infrastructure.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn-primary">Get in touch</a>
+        <a href="#experience" class="btn-outline">View experience</a>
+      </div>
+
+      <div class="stat-bar">
+        <div class="stat"><span class="stat-num">6+</span><span class="stat-label">Years experience</span></div>
+        <div class="stat"><span class="stat-num">400+</span><span class="stat-label">Tbps capacity managed</span></div>
+        <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Node environments</span></div>
+        <div class="stat"><span class="stat-num">75%</span><span class="stat-label">Config automation gain</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <span class="sec-tag">// 01 — Work history</span>
+      <div class="sec-title">Experience</div>
+    </div>
+
+    <div class="exp-list fade-in">
+
+      <div class="exp-item active" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div class="exp-title-wrap">
+            <div class="exp-role">Optical Network Engineer</div>
+            <div class="exp-company">Oracle Cloud Infrastructure</div>
+          </div>
+          <div class="exp-date">Apr 2025 — Present</div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Design and operate high-availability DC switching fabrics supporting 24x7 global production infrastructure across 200+ Tbps of OCI capacity</li>
+            <li>Deep L1–3 troubleshooting on 400G spine/leaf fabrics using Wireshark, tcpdump, and optical power analysis on Arista 7060DX5/7060DX4M and Juniper QFX5220-32CD</li>
+            <li>Configure VLAN segmentation, VTP domains, and STP/RSTP across high-density fabrics serving SOC and critical infrastructure workloads</li>
+            <li>Develop Python/ZTP automation tooling for 100% hands-off network operation including pre/post-change validation and topology drift detection</li>
+            <li>Deploy L2 crypto encryptors as WDM-integrated devices for end-to-end encrypted L2 adjacencies across inter-DC dark fiber paths</li>
+            <li>Led migrations of hundreds of terabits of live traffic with 99.999% availability SLAs</li>
+          </ul>
+          <div class="exp-tags">
+            <span class="tag">Arista 7060DX5</span><span class="tag">Juniper QFX5220</span><span class="tag">Infinera G30</span>
+            <span class="tag">DWDM</span><span class="tag">Python/ZTP</span><span class="tag">IOS-XE</span><span class="tag">BGP</span><span class="tag">OSPF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div class="exp-title-wrap">
+            <div class="exp-role">Network Engineer</div>
+            <div class="exp-company">UnitedHealth Group</div>
+          </div>
+          <div class="exp-date">Jan 2024 — Dec 2024</div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Deployed Cisco IOS-XE and Nexus 9K/7K/5K with VLAN, VTP, STP/RSTP, and EtherChannel across a 500+ node environment</li>
+            <li>Built Python scripts reducing manual config effort by 75% covering VLAN provisioning, ACL deployment, and interface validation</li>
+            <li>Deployed Cisco ISE for 802.1X port auth and MAB securing 1,000+ endpoints across campus access switches</li>
+            <li>Built Splunk dashboards correlating IOS-XE syslog with performance anomalies and security incidents</li>
+            <li>Used nmap for host-based reachability testing and TCP/IP diagnostics across Windows and Linux environments</li>
+          </ul>
+          <div class="exp-tags">
+            <span class="tag">Cisco ISE</span><span class="tag">Splunk</span><span class="tag">NX-OS</span>
+            <span class="tag">Python</span><span class="tag">Cisco ACI</span><span class="tag">Palo Alto</span><span class="tag">nmap</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div class="exp-title-wrap">
+            <div class="exp-role">Network Engineer</div>
+            <div class="exp-company">CenturyLink (Lumen Technologies)</div>
+          </div>
+          <div class="exp-date">Aug 2022 — Dec 2023</div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Managed IOS/IOS-XE operations across 150+ device WAN/campus environment — VLANs, STP, EtherChannel, HSRP/VRRP</li>
+            <li>Resolved 3 chronic congestion points via tcpdump and Wireshark deep-packet analysis, reducing peak utilization from 95% to under 70%</li>
+            <li>Managed F5 BIG-IP LTM hardware load balancers for high-availability application delivery across data center and SD-WAN</li>
+            <li>Executed SDWAN migration for 25+ remote sites from legacy MPLS with parallel-run validation and automated rollback</li>
+          </ul>
+          <div class="exp-tags">
+            <span class="tag">IOS-XE</span><span class="tag">F5 BIG-IP</span><span class="tag">Wireshark</span>
+            <span class="tag">SD-WAN</span><span class="tag">Palo Alto</span><span class="tag">NetFlow</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div class="exp-title-wrap">
+            <div class="exp-role">Network Engineer</div>
+            <div class="exp-company">Microsoft</div>
+          </div>
+          <div class="exp-date">Aug 2019 — Aug 2022</div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Administered Cisco IOS and NX-OS across 200+ locations — VLANs, inter-VLAN routing, VTP, STP/RSTP, port channels on Catalyst and Nexus 7K/5K/9K</li>
+            <li>Led Wi-Fi 5 → Wi-Fi 6 (802.11ax) upgrade across 200+ offices with Aruba 7200 WLCs and Mobility Master</li>
+            <li>L1–3 troubleshooting using Wireshark, tcpdump, and nmap; diagnosed DNS, DHCP, STP convergence, and BGP propagation issues</li>
+            <li>Configured OSPF, EIGRP, BGP with ACL prefix filtering across 150+ Cisco routers and switches</li>
+          </ul>
+          <div class="exp-tags">
+            <span class="tag">NX-OS</span><span class="tag">IOS</span><span class="tag">Aruba</span>
+            <span class="tag">BGP</span><span class="tag">OSPF</span><span class="tag">Wi-Fi 6</span><span class="tag">tcpdump</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <span class="sec-tag">// 02 — Technical proficiency</span>
+      <div class="sec-title">Skills</div>
+    </div>
+    <div class="skills-grid fade-in">
+
+      <div class="skill-card">
+        <div class="skill-card-title">Cisco platforms</div>
+        <div class="skill-list">
+          <div class="skill-row"><span class="skill-name">IOS / IOS-XE</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">NX-OS (Nexus)</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Cisco ISE</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:82%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Cisco ACI</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:78%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">ASR 9K / IOS-XR</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-title">L1–3 diagnostics</div>
+        <div class="skill-list">
+          <div class="skill-row"><span class="skill-name">Wireshark</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:93%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">tcpdump</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:90%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">nmap</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:85%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">NetFlow analysis</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:82%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Optical power (OTDR)</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:75%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-title">L2 switching</div>
+        <div class="skill-list">
+          <div class="skill-row"><span class="skill-name">VLAN / VTP</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:97%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">STP / RSTP / MSTP</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">EtherChannel / LACP</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:93%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">802.1X / MAB</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:82%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">HSRP / VRRP / GLBP</span><div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-title">Monitoring & automation</div>
+        <div class="skill-list">
+          <div class="skill-row"><span class="skill-name">Python / ZTP</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:88%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Splunk</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:80%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">SolarWinds Orion</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:82%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Ansible / Terraform</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:75%"></div></div></div>
+          <div class="skill-row"><span class="skill-name">F5 BIG-IP LTM</span><div class="skill-bar-track"><div class="skill-bar-fill blue" style="width:72%"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT HIGHLIGHTS -->
+<section id="highlights">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <span class="sec-tag">// 03 — Key achievements</span>
+      <div class="sec-title">Highlights</div>
+    </div>
+    <div class="proj-grid fade-in">
+      <div class="proj-card">
+        <span class="proj-num">01 // ORACLE</span>
+        <div class="proj-title">200+ Tbps capacity migrations</div>
+        <p class="proj-desc">Led zero-impact traffic migrations for hundreds of terabits of live OCI production traffic using pre-change validation scripts and automated rollback procedures.</p>
+        <div class="proj-metric">↑ 99.999% availability maintained</div>
+      </div>
+      <div class="proj-card">
+        <span class="proj-num">02 // UNITEDHEALTH</span>
+        <div class="proj-title">Python network automation suite</div>
+        <p class="proj-desc">Built Python scripts covering VLAN provisioning, ACL deployment, and interface state validation via SSH/NETCONF, replacing hours of manual work per change window.</p>
+        <div class="proj-metric">↓ 75% reduction in manual config effort</div>
+      </div>
+      <div class="proj-card">
+        <span class="proj-num">03 // UNITEDHEALTH</span>
+        <div class="proj-title">Cisco ISE 802.1X campus rollout</div>
+        <p class="proj-desc">Deployed and administered Cisco ISE across campus access switches for port-based 802.1X authentication and MAC address bypass, replacing open port access.</p>
+        <div class="proj-metric">1,000+ endpoints secured</div>
+      </div>
+      <div class="proj-card">
+        <span class="proj-num">04 // CENTURYLINK</span>
+        <div class="proj-title">WAN congestion resolution</div>
+        <p class="proj-desc">Used NetFlow analysis and Wireshark deep-packet inspection to identify and resolve 3 chronic congestion points across the production WAN fabric.</p>
+        <div class="proj-metric">↓ 95% → under 70% peak utilization</div>
+      </div>
+      <div class="proj-card">
+        <span class="proj-num">05 // MICROSOFT</span>
+        <div class="proj-title">Wi-Fi 6 enterprise upgrade</div>
+        <p class="proj-desc">End-to-end upgrade from 802.11ac to Wi-Fi 6 across 200+ global office locations with Aruba 7200 WLCs and centralized Mobility Master policy management.</p>
+        <div class="proj-metric">200+ locations upgraded</div>
+      </div>
+      <div class="proj-card">
+        <span class="proj-num">06 // CENTURYLINK</span>
+        <div class="proj-title">MPLS → SD-WAN migration</div>
+        <p class="proj-desc">Executed full SDWAN migration for 25+ remote sites from legacy Cisco MPLS to CenturyLink SD-WAN with parallel-run validation and automated Python rollback.</p>
+        <div class="proj-metric">25+ sites, zero unplanned downtime</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <span class="sec-tag">// 04 — Academic background</span>
+      <div class="sec-title">Education</div>
+    </div>
+    <div class="edu-grid fade-in">
+      <div class="edu-card">
+        <div class="edu-degree">M.S. Computer Science</div>
+        <div class="edu-school">Texas A&M University</div>
+        <div class="edu-dates">2018 – 2020</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">M.S. Information Systems Security</div>
+        <div class="edu-school">University of the Cumberlands</div>
+        <div class="edu-dates">2023 – 2024</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">M.S. IT Management & Leadership</div>
+        <div class="edu-school">Campbellsville University (Online)</div>
+        <div class="edu-dates">2024 – 2026</div>
+      </div>
+      <div class="edu-card" style="background: var(--surface2); display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.1em;">PURSUING</div>
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--accent);">Cisco CCNA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner fade-in">
+      <div>
+        <div class="contact-heading">Let's build something reliable.</div>
+        <p class="contact-sub">Open to senior network engineering roles in global infrastructure, physical security networks, or hyperscale environments.</p>
+        <a href="#" class="btn-primary" onclick="sendPrompt('Help me write a message to Anshul Mehta about a network engineering opportunity')">Send a message ↗</a>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:manshul31@gmail.com" class="contact-link">
+          <div class="contact-link-icon">✉</div>
+          <div>
+            <div class="contact-link-text">manshul31@gmail.com</div>
+            <div class="contact-link-sub">Email</div>
+          </div>
+        </a>
+        <a href="tel:3612280094" class="contact-link">
+          <div class="contact-link-icon">✆</div>
+          <div>
+            <div class="contact-link-text">(361) 228-0094</div>
+            <div class="contact-link-sub">Phone</div>
+          </div>
+        </a>
+        <div class="contact-link">
+          <div class="contact-link-icon">⌖</div>
+          <div>
+            <div class="contact-link-text">Chicago, Illinois</div>
+            <div class="contact-link-sub">Location — open to travel</div>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span style="color: var(--accent); font-family: var(--mono);">AM</span> — Network Engineer — Chicago, IL — 2026
+</footer>
+
+<script>
+  function toggleExp(el) {
+    const items = document.querySelectorAll('.exp-item');
+    items.forEach(i => { if (i !== el) i.classList.remove('active'); });
+    el.classList.toggle('active');
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
